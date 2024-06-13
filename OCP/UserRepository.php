@@ -1,25 +1,36 @@
 /*
 * Curso de Engenharia de Software - UniEVANGÉLICA 
 * Disciplina de Programação Web 
-* Dev: OTAVIO LEMES DE OLIVEIRA 
+* Dev: Victor soares  
 * DATA: 13/06/2024
 */ 
 <?php
-class UserRepository implements UserRepositoryInterface {
-    private $pdo;
+// Definindo uma interface para serviços de usuário
+interface UserServiceInterface {
+    public function save(User $user);
+    public function getAllUsers();
+}
+// Definindo uma interface para serviços de usuário
+interface UserServiceInterface {
+    public function save(User $user);
+    public function getAllUsers();
+}
 
-    public function __construct(PDO $pdo) {
-        $this->pdo = $pdo;
-    }
-
+// Implementação do UserService conforme a interface
+class UserService implements UserServiceInterface {
     public function save(User $user) {
-        $stmt = $this->pdo->prepare("INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$user->getId(), $user->getName(), $user->getEmail(), $user->getPassword()]);
+        DB::table('users')->insert([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'password' => $user->password
+        ]);
     }
 
     public function getAllUsers() {
-        $stmt = $this->pdo->query("SELECT id, name, email FROM users");
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
+        return DB::table('users')->get();
     }
 }
+
+// Agora UserService pode ser extendido sem modificar a classe UserServiceInterface
 ?>
